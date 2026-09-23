@@ -14,7 +14,7 @@ win:
     - target: portable
       arch:
         - x64
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: MCP-Helper-${version}-${arch}.${ext}
 nsis:
   oneClick: false
   perMachine: false
@@ -23,4 +23,4 @@ nsis:
   createStartMenuShortcut: true
   shortcutName: MCP Helper
 portable:
-  artifactName: ${productName}-${version}-portable.${ext}
+  artifactName: MCP-Helper-${version}-portable.${ext}

@@ -35,8 +35,8 @@ A Windows desktop app to manage, test and debug MCP servers.
 
 从 [Releases](https://github.com/chenxilin1994/mcp-helper/releases) 下载：
 
-- `MCP Helper-x.y.z-portable.exe` — 免安装，双击即用
-- `MCP Helper-x.y.z-x64.exe` — 安装版，带开始菜单与桌面快捷方式
+- `MCP-Helper-0.1.0-portable.exe` — 免安装，双击即用
+- `MCP-Helper-0.1.0-x64.exe` — 安装版，带开始菜单与桌面快捷方式
 
 应用未做代码签名，首次运行时 SmartScreen 提示选择「更多信息 → 仍要运行」即可。
 
