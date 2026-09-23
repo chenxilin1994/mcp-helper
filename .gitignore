@@ -4,6 +4,7 @@ dist/
 release/
 .impeccable/
 *.log
+*.tsbuildinfo
 .env
 .env.*
 .npmrc
