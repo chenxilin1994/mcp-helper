@@ -1,0 +1,26 @@
+appId: com.mcphelper.app
+productName: MCP Helper
+directories:
+  output: release
+files:
+  - out/**/*
+  - package.json
+npmRebuild: false
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  artifactName: ${productName}-${version}-${arch}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: MCP Helper
+portable:
+  artifactName: ${productName}-${version}-portable.${ext}

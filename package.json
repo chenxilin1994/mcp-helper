@@ -1,0 +1,56 @@
+﻿{
+  "name": "mcp-helper",
+  "productName": "MCP Helper",
+  "version": "0.1.0",
+  "description": "Manage, test and debug MCP servers on Windows",
+  "main": "./out/main/index.js",
+  "author": "chenxilin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenxilin1994/mcp-helper.git"
+  },
+  "homepage": "https://github.com/chenxilin1994/mcp-helper#readme",
+  "bugs": {
+    "url": "https://github.com/chenxilin1994/mcp-helper/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "electron",
+    "windows",
+    "developer-tools"
+  ],
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "smoke": "tsx scripts/smoke.ts",
+    "capture": "node scripts/capture.mjs",
+    "package": "node scripts/package.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.4.3",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6"
+  },
+  "allowScripts": {
+    "electron@44.4.3": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "electron-winstaller@5.4.0": true
+  }
+}
