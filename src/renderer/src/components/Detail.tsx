@@ -15,6 +15,7 @@ import {
   duplicateServer,
   goTo,
   setTab,
+  shortcutHint,
   testServer,
   toggleEnabled,
   toggleFavorite
@@ -91,7 +92,13 @@ export function Detail({ server }: { server: MCPServerConfig }): ReactNode {
           </div>
 
           <div className="detail__actions">
-            <Button size="sm" icon="pulse" loading={testing} onClick={() => void testServer(server.id)}>
+            <Button
+              size="sm"
+              icon="pulse"
+              loading={testing}
+              title={`测试连接（${shortcutHint('testCurrent')}）`}
+              onClick={() => void testServer(server.id)}
+            >
               测试连接
             </Button>
             {status === 'ready' ? (
@@ -107,6 +114,7 @@ export function Detail({ server }: { server: MCPServerConfig }): ReactNode {
               size="sm"
               variant="ghost"
               icon="pencil"
+              title={`编辑（${shortcutHint('editCurrent')}）`}
               onClick={() => goTo({ mode: 'edit', serverId: server.id, tab: 'overview', capKind: 'tools', capItem: null, autorun: false })}
             >
               编辑

@@ -12,6 +12,7 @@ import type {
   ThemeMode,
   ToolCallResult
 } from '@shared/types'
+import { DEFAULT_SHORTCUTS, ZOOM_LEVELS, type ShortcutAction } from '@shared/shortcuts'
 import {
   appendLog,
   applyProbeEvent,
@@ -29,6 +30,8 @@ import {
   type ViewState
 } from './store'
 import { hashFor, navigateHash, parseRoute } from './router'
+import { selectVisibleServers } from './selectors'
+import { acceleratorFromEvent, findActionForEvent } from '../lib/shortcuts'
 import { formatLatency } from '../lib/format'
 
 function messageOf(error: unknown): string {
@@ -100,7 +103,7 @@ export async function bootstrap(): Promise<void> {
     const runtime: Record<string, RuntimeState> = {}
     for (const [id, status] of Object.entries(snapshot.statuses)) runtime[id] = { status }
     setState({ app, runtime, logs: snapshot.logs, ready: true, view: route.view, dialog: route.dialog })
-    applyTheme(app.settings.theme)
+    applyAppearance(app.settings)
     if (bareHome && app.servers.length) {
       const first = [...app.servers].sort((a, b) =>
         a.favorite !== b.favorite ? (a.favorite ? -1 : 1) : a.name.localeCompare(b.name, 'zh-Hans-CN')
@@ -114,8 +117,8 @@ export async function bootstrap(): Promise<void> {
   window.api.onEvent(handleEvent)
   window.addEventListener('hashchange', applyRoute)
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const mode = getState().app?.settings.theme
-    if (mode === 'system' || !mode) applyTheme('system')
+    const settings = getState().app?.settings
+    if (settings && settings.theme === 'system') applyAppearance(settings)
   })
 }
 
@@ -140,10 +143,128 @@ function handleEvent(event: MCPEvent): void {
   }
 }
 
-export function applyTheme(mode: ThemeMode): void {
+export function applyAppearance(settings: Settings): void {
+  const root = document.documentElement
   const resolved =
-    mode === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode
-  document.documentElement.dataset.theme = resolved
+    settings.theme === 'system'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+      : settings.theme
+  root.dataset.theme = resolved
+  root.dataset.palette = settings.palette
+  root.dataset.uifont = settings.uiFont
+  root.dataset.monofont = settings.monoFont
+  root.style.setProperty('--font-scale', String(settings.fontScale))
+}
+
+export function focusSearch(): void {
+  const input = document.querySelector<HTMLInputElement>('.search__input')
+  input?.focus()
+  input?.select()
+}
+
+export async function setZoom(value: number): Promise<void> {
+  const clamped = Math.min(1.5, Math.max(0.8, value))
+  const nearest = ZOOM_LEVELS.reduce(
+    (best, level) => (Math.abs(level.value - clamped) < Math.abs(best - clamped) ? level.value : best),
+    ZOOM_LEVELS[2].value
+  )
+  await saveSettings({ zoom: nearest })
+}
+
+function stepServer(direction: 1 | -1): void {
+  const state = getState()
+  const servers = selectVisibleServers(state)
+  if (!servers.length) return
+  const index = servers.findIndex((server) => server.id === state.view.serverId)
+  const target = servers[index < 0 ? 0 : Math.min(servers.length - 1, Math.max(0, index + direction))]
+  if (target) openServer(target.id)
+}
+
+export function runShortcutAction(action: ShortcutAction): void {
+  const state = getState()
+  const current = state.view.serverId
+
+  switch (action) {
+    case 'newServer':
+      goTo({ mode: 'create', serverId: null, tab: 'overview', capKind: 'tools', capItem: null, autorun: false })
+      break
+    case 'search':
+      focusSearch()
+      break
+    case 'nextServer':
+      stepServer(1)
+      break
+    case 'prevServer':
+      stepServer(-1)
+      break
+    case 'openImport':
+      openDialog('import')
+      break
+    case 'openSettings':
+      openDialog('settings')
+      break
+    case 'testCurrent':
+      if (current) void testServer(current)
+      break
+    case 'testAll':
+      void testAll()
+      break
+    case 'editCurrent':
+      if (current) {
+        goTo({ mode: 'edit', serverId: current, tab: 'overview', capKind: 'tools', capItem: null, autorun: false })
+      }
+      break
+    case 'toggleFavorite':
+      if (current) void toggleFavorite(current)
+      break
+    case 'tabOverview':
+    case 'tabCaps':
+    case 'tabLogs':
+    case 'tabJson': {
+      if (!current) break
+      const tab = action === 'tabOverview' ? 'overview' : action === 'tabCaps' ? 'caps' : action === 'tabLogs' ? 'logs' : 'json'
+      setTab(current, tab)
+      break
+    }
+    case 'zoomIn':
+      void setZoom((state.app?.settings.zoom ?? 1) + 0.1)
+      break
+    case 'zoomOut':
+      void setZoom((state.app?.settings.zoom ?? 1) - 0.1)
+      break
+    case 'zoomReset':
+      void setZoom(1)
+      break
+  }
+}
+
+export function handleShortcutEvent(event: KeyboardEvent): boolean {
+  const shortcuts = getState().app?.settings.shortcuts
+  const action = findActionForEvent(event, shortcuts)
+  if (!action) return false
+
+  const target = event.target as HTMLElement | null
+  const typing = Boolean(
+    target &&
+      (target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable)
+  )
+  const accelerator = acceleratorFromEvent(event) ?? ''
+  const hasModifier = accelerator.includes('Ctrl') || accelerator.includes('Alt')
+  if (typing && !hasModifier) return false
+
+  runShortcutAction(action)
+  return true
+}
+
+export function shortcutHint(action: ShortcutAction): string {
+  const shortcuts = getState().app?.settings.shortcuts
+  const value = shortcuts?.[action]
+  return (value === undefined ? DEFAULT_SHORTCUTS[action] : value).replace(/\+/g, ' + ')
 }
 
 export function clearCapsCache(serverId: string): void {
@@ -476,7 +597,7 @@ export async function saveSettings(patch: Partial<Settings>): Promise<void> {
   try {
     const app = await window.api.saveSettings(patch)
     setState({ app })
-    applyTheme(app.settings.theme)
+    applyAppearance(app.settings)
   } catch (error) {
     pushToast({ kind: 'error', title: '保存设置失败', message: messageOf(error) })
   }

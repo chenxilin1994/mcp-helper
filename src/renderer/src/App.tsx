@@ -8,7 +8,7 @@ import { ImportExportDialog } from './components/ImportExport'
 import { GroupEditorDialog, SettingsDialog } from './components/Settings'
 import { ConfirmHost, ContextMenuHost, ToastHost } from './components/primitives'
 import { Icon } from './components/Icons'
-import { bootstrap, dismissConfirm, goTo, resolveConfirm, setSearch } from './state/actions'
+import { bootstrap, dismissConfirm, handleShortcutEvent, resolveConfirm } from './state/actions'
 import { closeContextMenu, dismissToast, useStore } from './state/store'
 
 export default function App(): ReactNode {
@@ -20,26 +20,7 @@ export default function App(): ReactNode {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      const modifier = event.ctrlKey || event.metaKey
-      if (!modifier) return
-      const key = event.key.toLowerCase()
-      if (key === 'n') {
-        event.preventDefault()
-        goTo({ mode: 'create', serverId: null, tab: 'overview', capKind: 'tools', capItem: null, autorun: false })
-      }
-      if (key === 'k') {
-        event.preventDefault()
-        const input = document.querySelector<HTMLInputElement>('.search__input')
-        input?.focus()
-        input?.select()
-      }
-      if (key === 'f') {
-        const active = document.activeElement
-        if (active && ['INPUT', 'TEXTAREA'].includes(active.tagName)) return
-        event.preventDefault()
-        setSearch('')
-        document.querySelector<HTMLInputElement>('.search__input')?.focus()
-      }
+      if (handleShortcutEvent(event)) event.preventDefault()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)

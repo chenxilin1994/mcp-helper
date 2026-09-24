@@ -1,4 +1,4 @@
-﻿# MCP Helper
+# MCP Helper
 
 Windows 桌面端的 MCP（Model Context Protocol）服务器管理器：把散落各处的 MCP 配置集中到一处，随时验证连通性、枚举能力、测试调用。
 
@@ -26,17 +26,27 @@ A Windows desktop app to manage, test and debug MCP servers.
 - 实时日志：子进程 stderr 与 JSON-RPC 事件流
 
 **其他**
-- 深色 / 浅色主题（跟随系统），`Ctrl+N` 新建、`Ctrl+K` 搜索、列表支持方向键与右键菜单
+- 实时日志：子进程 stderr 与 JSON-RPC 事件流
+- 删除后 8 秒内可撤销；列表支持方向键、右键菜单与双击编辑
 - 配置保存在 `%APPDATA%\MCP Helper\mcp-helper.json`，每次写入前自动备份
+
+**外观与操作**
+- 6 套配色（信号黄 / 深海青 / 苔绿 / 品紫 / 暖橙 / 单色）× 深色 / 浅色 / 跟随系统
+- 界面字体与代码字体可切换，字号四档，页面缩放 80%–150%
+- 所有快捷键可自定义：点击录制新组合键、冲突检测、单项清除或一键恢复默认
+
+![设置](docs/screenshots/settings.png)
+
+![快捷键](docs/screenshots/shortcuts.png)
 
 ![编辑器](docs/screenshots/editor.png)
 
 ## 下载
 
-从 [Releases](https://github.com/chenxilin1994/mcp-helper/releases) 下载：
+从 [Releases](https://github.com/chenxilin1994/mcp-helper/releases) 下载最新版：
 
-- `MCP-Helper-0.1.0-portable.exe` — 免安装，双击即用
-- `MCP-Helper-0.1.0-x64.exe` — 安装版，带开始菜单与桌面快捷方式
+- `MCP-Helper-<版本>-portable.exe` — 免安装，双击即用
+- `MCP-Helper-<版本>-x64.exe` — 安装版，带开始菜单与桌面快捷方式
 
 应用未做代码签名，首次运行时 SmartScreen 提示选择「更多信息 → 仍要运行」即可。
 
@@ -56,6 +66,8 @@ npm run package    # 打包 Windows 安装包与便携版，输出到 release/
 ```bash
 ELECTRON_MIRROR=... ELECTRON_BUILDER_BINARIES_MIRROR=... npm run package
 ```
+
+> `npm install` 时如果 Electron 二进制下载失败，先设置 `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/` 再安装。
 
 ## 技术栈
 

@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import type { ConnectionStatus, LogLine, MCPEvent, MCPServerConfig, ServerDraft, Settings, TestStage } from '../shared/types'
 import type { Store } from './store'
 import type { McpManager } from './mcp/manager'
@@ -75,7 +75,16 @@ export function registerIpc(store: Store, manager: McpManager, broadcast: (event
 
   handle('groups:delete', (id: string) => store.deleteGroup(id))
   handle('groups:reorder', (ids: string[]) => store.reorderGroups(ids))
-  handle('settings:save', (settings: Partial<Settings>) => store.saveSettings(settings))
+
+  handle('settings:save', (settings: Partial<Settings>) => {
+    const state = store.saveSettings(settings)
+    if (typeof settings.zoom === 'number') {
+      for (const window of BrowserWindow.getAllWindows()) {
+        window.webContents.setZoomFactor(state.settings.zoom)
+      }
+    }
+    return state
+  })
 
   handle('servers:import', (payload: { servers: ImportedServer[]; groupName?: string }) => {
     if (!payload?.servers?.length) throw new Error('没有可导入的服务器')

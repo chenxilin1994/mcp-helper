@@ -1,14 +1,21 @@
 :root {
-  --font-ui: 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Microsoft YaHei UI', sans-serif;
-  --font-display: 'Bahnschrift', 'Segoe UI Variable Display', 'Segoe UI', system-ui, 'Microsoft YaHei UI', sans-serif;
-  --font-mono: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  --stack-system: 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Microsoft YaHei UI', sans-serif;
+  --stack-display: 'Bahnschrift', 'Segoe UI Variable Display', 'Segoe UI', system-ui, 'Microsoft YaHei UI', sans-serif;
+  --stack-yahei: 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+  --stack-mono: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
 
-  --fs-11: 11px;
-  --fs-12: 12px;
-  --fs-13: 13px;
-  --fs-15: 15px;
-  --fs-18: 18px;
-  --fs-23: 23px;
+  --font-ui: var(--stack-system);
+  --font-display: var(--stack-display);
+  --font-mono: var(--stack-mono);
+
+  --font-scale: 1;
+
+  --fs-11: calc(11px * var(--font-scale));
+  --fs-12: calc(12px * var(--font-scale));
+  --fs-13: calc(13px * var(--font-scale));
+  --fs-15: calc(15px * var(--font-scale));
+  --fs-18: calc(18px * var(--font-scale));
+  --fs-23: calc(23px * var(--font-scale));
 
   --r-xs: 3px;
   --r-sm: 4px;
@@ -23,6 +30,28 @@
 
   color-scheme: dark;
 }
+
+:root[data-uifont='display'] {
+  --font-ui: var(--stack-display);
+}
+
+:root[data-uifont='yahei'] {
+  --font-ui: var(--stack-yahei);
+}
+
+:root[data-uifont='mono'] {
+  --font-ui: var(--stack-mono);
+}
+
+:root[data-monofont='consolas'] {
+  --font-mono: Consolas, 'Courier New', monospace;
+}
+
+:root[data-monofont='system'] {
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+/* --------------------------------------------------------------- palettes */
 
 :root[data-theme='dark'] {
   color-scheme: dark;
@@ -108,4 +137,164 @@
   --code-literal: #7a4a9c;
   --code-punct: #7a8794;
   --code-plain: #55606c;
+}
+
+/* deep — 深海青 */
+
+:root[data-theme='dark'][data-palette='deep'] {
+  --ground: #0f141b;
+  --sidebar: #131922;
+  --panel: #161d27;
+  --panel-hover: #1b232e;
+  --raise: #202935;
+  --raise-2: #27313e;
+  --accent: #5ec8dd;
+  --accent-strong: #3fb0c8;
+  --accent-hover: #7ad6e8;
+  --accent-soft: rgba(94, 200, 221, 0.14);
+  --accent-contrast: #0d1216;
+  --accent-ring: rgba(94, 200, 221, 0.45);
+}
+
+:root[data-theme='light'][data-palette='deep'] {
+  --ground: #eef2f4;
+  --sidebar: #e6ecef;
+  --panel: #ffffff;
+  --panel-hover: #f2f6f8;
+  --raise: #eaf0f3;
+  --raise-2: #e0e8ec;
+  --accent: #106b7d;
+  --accent-strong: #1e93a8;
+  --accent-hover: #17798d;
+  --accent-soft: rgba(30, 147, 168, 0.14);
+  --accent-contrast: #0c1418;
+  --accent-ring: rgba(16, 107, 125, 0.35);
+}
+
+/* moss — 苔绿 */
+
+:root[data-theme='dark'][data-palette='moss'] {
+  --ground: #121712;
+  --sidebar: #161c16;
+  --panel: #191f19;
+  --panel-hover: #1e251e;
+  --raise: #232b23;
+  --raise-2: #2a332a;
+  --accent: #7cc98d;
+  --accent-strong: #5cb573;
+  --accent-hover: #96d6a4;
+  --accent-soft: rgba(124, 201, 141, 0.14);
+  --accent-contrast: #101410;
+  --accent-ring: rgba(124, 201, 141, 0.45);
+}
+
+:root[data-theme='light'][data-palette='moss'] {
+  --ground: #f0f3ef;
+  --sidebar: #e8ede6;
+  --panel: #ffffff;
+  --panel-hover: #f3f7f1;
+  --raise: #ecf1ea;
+  --raise-2: #e2e9df;
+  --accent: #1f6b3c;
+  --accent-strong: #2f8c50;
+  --accent-hover: #257b45;
+  --accent-soft: rgba(47, 140, 80, 0.14);
+  --accent-contrast: #0d130e;
+  --accent-ring: rgba(31, 107, 60, 0.35);
+}
+
+/* plum — 品紫 */
+
+:root[data-theme='dark'][data-palette='plum'] {
+  --ground: #151119;
+  --sidebar: #1a151f;
+  --panel: #1e1824;
+  --panel-hover: #241d2b;
+  --raise: #2b2333;
+  --raise-2: #332a3d;
+  --accent: #b98ce8;
+  --accent-strong: #a170d9;
+  --accent-hover: #c9a3f0;
+  --accent-soft: rgba(185, 140, 232, 0.14);
+  --accent-contrast: #14101a;
+  --accent-ring: rgba(185, 140, 232, 0.45);
+}
+
+:root[data-theme='light'][data-palette='plum'] {
+  --ground: #f3f0f5;
+  --sidebar: #ebe7ef;
+  --panel: #ffffff;
+  --panel-hover: #f7f4f9;
+  --raise: #f0ecf4;
+  --raise-2: #e7e1ed;
+  --accent: #6b3aa0;
+  --accent-strong: #8450bd;
+  --accent-hover: #7644ae;
+  --accent-soft: rgba(132, 80, 189, 0.14);
+  --accent-contrast: #140f18;
+  --accent-ring: rgba(107, 58, 160, 0.35);
+}
+
+/* ember — 暖橙 */
+
+:root[data-theme='dark'][data-palette='ember'] {
+  --ground: #191411;
+  --sidebar: #1e1815;
+  --panel: #231c18;
+  --panel-hover: #2a221d;
+  --raise: #332822;
+  --raise-2: #3c3029;
+  --accent: #eb9b52;
+  --accent-strong: #dd8636;
+  --accent-hover: #f2ae6d;
+  --accent-soft: rgba(235, 155, 82, 0.14);
+  --accent-contrast: #191310;
+  --accent-ring: rgba(235, 155, 82, 0.45);
+}
+
+:root[data-theme='light'][data-palette='ember'] {
+  --ground: #f5f1ec;
+  --sidebar: #efe9e2;
+  --panel: #ffffff;
+  --panel-hover: #faf6f1;
+  --raise: #f4efe8;
+  --raise-2: #ece4da;
+  --accent: #8f4f12;
+  --accent-strong: #c26f1f;
+  --accent-hover: #a55f18;
+  --accent-soft: rgba(194, 111, 31, 0.14);
+  --accent-contrast: #17110b;
+  --accent-ring: rgba(143, 79, 18, 0.35);
+}
+
+/* mono — 单色 */
+
+:root[data-theme='dark'][data-palette='mono'] {
+  --ground: #151617;
+  --sidebar: #191b1c;
+  --panel: #1c1e20;
+  --panel-hover: #212426;
+  --raise: #26292c;
+  --raise-2: #2e3235;
+  --accent: #ccd3da;
+  --accent-strong: #b9c2ca;
+  --accent-hover: #dde4ea;
+  --accent-soft: rgba(204, 211, 218, 0.12);
+  --accent-contrast: #14161a;
+  --accent-ring: rgba(204, 211, 218, 0.4);
+}
+
+:root[data-theme='light'][data-palette='mono'] {
+  --ground: #f1f2f3;
+  --sidebar: #e9eaec;
+  --panel: #ffffff;
+  --panel-hover: #f4f5f6;
+  --raise: #eef0f1;
+  --raise-2: #e4e7e9;
+  --accent: #2f3a45;
+  --accent-strong: #46525e;
+  --accent-hover: #3a4653;
+  --accent-soft: rgba(70, 82, 94, 0.12);
+  --accent-contrast: #ffffff;
+  --accent-ring: rgba(47, 58, 69, 0.35);
 }

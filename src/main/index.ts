@@ -26,6 +26,7 @@ if (isCapture) {
 
 let mainWindow: BrowserWindow | null = null
 let manager: McpManager | null = null
+let store: Store | null = null
 let quitting = false
 
 function createWindow(): void {
@@ -52,9 +53,16 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
+  const applyZoom = (): void => {
+    const zoom = store?.getState().settings.zoom ?? 1
+    mainWindow?.webContents.setZoomFactor(zoom)
+  }
+  applyZoom()
+
   const devUrl = process.env['ELECTRON_RENDERER_URL']
 
   const ready = async (): Promise<void> => {
+    applyZoom()
     if (!isCapture) {
       mainWindow?.show()
       return
@@ -134,8 +142,8 @@ if (!gotLock && !isCapture) {
 
   void app.whenReady().then(() => {
     const dir = dataDir ?? app.getPath('userData')
-    const store = new Store(dir)
-    manager = new McpManager(() => store.getState().settings)
+    store = new Store(dir)
+    manager = new McpManager(() => store!.getState().settings)
 
     registerIpc(store, manager, (event: MCPEvent) => {
       if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('mcp:event', event)

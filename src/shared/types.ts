@@ -1,3 +1,5 @@
+import type { MonoFont, ShortcutAction, ThemePalette, UiFont } from './shortcuts'
+
 export type TransportType = 'stdio' | 'sse' | 'http'
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'ready' | 'error'
@@ -60,8 +62,14 @@ export interface MCPGroup {
 
 export interface Settings {
   theme: ThemeMode
+  palette: ThemePalette
+  uiFont: UiFont
+  monoFont: MonoFont
+  fontScale: number
+  zoom: number
   connectTimeoutMs: number
   callTimeoutMs: number
+  shortcuts: Partial<Record<ShortcutAction, string>>
 }
 
 export interface AppState {

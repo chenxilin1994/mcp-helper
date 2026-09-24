@@ -1,4 +1,4 @@
-﻿import { spawnSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -11,8 +11,9 @@ fs.mkdirSync(outDir, { recursive: true })
 
 const fixtureDir = path.join(os.tmpdir(), 'mcp-helper-capture-fixture')
 const lightDir = path.join(os.tmpdir(), 'mcp-helper-capture-light')
+const deepDir = path.join(os.tmpdir(), 'mcp-helper-capture-deep')
 const emptyDir = path.join(os.tmpdir(), 'mcp-helper-capture-empty')
-for (const dir of [fixtureDir, lightDir, emptyDir]) {
+for (const dir of [fixtureDir, lightDir, deepDir, emptyDir]) {
   fs.rmSync(dir, { recursive: true, force: true })
   fs.mkdirSync(dir, { recursive: true })
 }
@@ -181,6 +182,11 @@ fs.writeFileSync(
   JSON.stringify({ ...baseState, settings: { ...baseState.settings, theme: 'light' } }, null, 2)
 )
 
+fs.writeFileSync(
+  path.join(deepDir, 'mcp-helper.json'),
+  JSON.stringify({ ...baseState, settings: { ...baseState.settings, theme: 'dark', palette: 'deep' } }, null, 2)
+)
+
 const views = [
   { name: '01-empty', dir: emptyDir, hash: '#/', delay: 1400 },
   { name: '02-home', dir: fixtureDir, hash: '#/?stay=1', delay: 1400 },
@@ -195,7 +201,16 @@ const views = [
   { name: '05-editor', dir: fixtureDir, hash: '#/new', delay: 1400 },
   { name: '06-import', dir: fixtureDir, hash: '#/import', delay: 1400 },
   { name: '07-logs', dir: fixtureDir, hash: '#/s/demo/logs', delay: 1400 },
-  { name: '08-light', dir: lightDir, hash: '#/s/demo', delay: 1400 }
+  { name: '08-light', dir: lightDir, hash: '#/s/demo', delay: 1400 },
+  { name: '09-settings-appearance', dir: fixtureDir, hash: '#/settings', delay: 1500 },
+  {
+    name: '10-settings-shortcuts',
+    dir: fixtureDir,
+    hash: '#/settings',
+    delay: 1500,
+    js: "new Promise(function(resolve){var t=setInterval(function(){var dialogs=Array.prototype.slice.call(document.querySelectorAll('.dialog'));var d=dialogs.filter(function(x){var el=x.querySelector('.dialog__title');return el&&el.textContent==='设置'})[0];if(d){var items=d.querySelectorAll('.segmented__item');if(items.length>2){items[1].click();clearInterval(t);resolve('clicked')}}},200);setTimeout(function(){clearInterval(t);resolve('timeout')},8000)})"
+  },
+  { name: '11-palette-deep', dir: deepDir, hash: '#/s/demo', delay: 1500 }
 ]
 
 let failures = 0

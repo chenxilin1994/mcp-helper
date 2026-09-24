@@ -2,11 +2,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type { AppState, MCPGroup, MCPServerConfig, ServerDraft, Settings, TestResult } from '../shared/types'
+import { DEFAULT_SHORTCUTS, type ShortcutAction } from '../shared/shortcuts'
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
+  palette: 'signal',
+  uiFont: 'system',
+  monoFont: 'cascadia',
+  fontScale: 1,
+  zoom: 1,
   connectTimeoutMs: 30_000,
-  callTimeoutMs: 60_000
+  callTimeoutMs: 60_000,
+  shortcuts: {}
 }
 
 function defaultState(): AppState {
@@ -72,8 +79,28 @@ function normalize(input: unknown): AppState {
   if (raw.settings && typeof raw.settings === 'object') {
     const s = raw.settings as Record<string, unknown>
     if (s.theme === 'dark' || s.theme === 'light' || s.theme === 'system') settings.theme = s.theme
+    if (typeof s.palette === 'string' && ['signal', 'deep', 'moss', 'plum', 'ember', 'mono'].includes(s.palette)) {
+      settings.palette = s.palette as Settings['palette']
+    }
+    if (typeof s.uiFont === 'string' && ['system', 'display', 'yahei', 'mono'].includes(s.uiFont)) {
+      settings.uiFont = s.uiFont as Settings['uiFont']
+    }
+    if (typeof s.monoFont === 'string' && ['cascadia', 'consolas', 'system'].includes(s.monoFont)) {
+      settings.monoFont = s.monoFont as Settings['monoFont']
+    }
+    if (typeof s.fontScale === 'number' && s.fontScale >= 0.8 && s.fontScale <= 1.4) settings.fontScale = s.fontScale
+    if (typeof s.zoom === 'number' && s.zoom >= 0.5 && s.zoom <= 2) settings.zoom = s.zoom
     if (typeof s.connectTimeoutMs === 'number' && s.connectTimeoutMs > 0) settings.connectTimeoutMs = s.connectTimeoutMs
     if (typeof s.callTimeoutMs === 'number' && s.callTimeoutMs > 0) settings.callTimeoutMs = s.callTimeoutMs
+    if (s.shortcuts && typeof s.shortcuts === 'object') {
+      const shortcuts: Partial<Record<ShortcutAction, string>> = {}
+      for (const [action, value] of Object.entries(s.shortcuts as Record<string, unknown>)) {
+        if (action in DEFAULT_SHORTCUTS && typeof value === 'string' && value.length < 60) {
+          shortcuts[action as ShortcutAction] = value
+        }
+      }
+      settings.shortcuts = shortcuts
+    }
   }
 
   return { version: 1, servers, groups, settings }

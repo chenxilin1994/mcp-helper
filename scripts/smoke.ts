@@ -2,11 +2,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { McpManager } from '../src/main/mcp/manager'
-import { Store } from '../src/main/store'
+import { DEFAULT_SETTINGS, Store } from '../src/main/store'
 import { exportFor, parseDocument, toDrafts } from '../src/main/clients'
 import type { MCPServerConfig, ServerDraft, Settings } from '../src/shared/types'
 
-const settings: Settings = { theme: 'system', connectTimeoutMs: 20_000, callTimeoutMs: 20_000 }
+const settings: Settings = { ...DEFAULT_SETTINGS }
 const mockServer = path.resolve('scripts/mock-mcp-server.mjs')
 
 const base: MCPServerConfig = {

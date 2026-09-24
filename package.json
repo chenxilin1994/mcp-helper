@@ -1,7 +1,7 @@
-﻿{
+{
   "name": "mcp-helper",
   "productName": "MCP Helper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Manage, test and debug MCP servers on Windows",
   "main": "./out/main/index.js",
   "author": "chenxilin",

@@ -2,6 +2,7 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'node:path'
 import type { Plugin } from 'vite'
+import pkg from './package.json'
 
 function injectCsp(): Plugin {
   return {
@@ -37,6 +38,9 @@ export default defineConfig({
         '@': resolve(__dirname, 'src/renderer/src'),
         '@shared': resolve(__dirname, 'src/shared')
       }
+    },
+    define: {
+      __APP_VERSION__: JSON.stringify(pkg.version)
     },
     plugins: [react(), injectCsp()],
     build: {

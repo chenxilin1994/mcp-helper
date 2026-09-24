@@ -9,34 +9,20 @@ import {
   goTo,
   openServer,
   setSearch,
+  shortcutHint,
   testAll,
   testServer,
   toggleEnabled,
   toggleFavorite
 } from '../state/actions'
 import { openContextMenu, useStore } from '../state/store'
+import { selectVisibleServers } from '../state/selectors'
 
 export function ServerList(): ReactNode {
-  const { app, search, groupFilter, view, busy } = useStore()
+  const state = useStore()
+  const { app, search, groupFilter, view, busy } = state
 
-  const servers = useMemo(() => {
-    const all = app?.servers ?? []
-    const query = search.trim().toLowerCase()
-    let filtered = all
-    if (groupFilter === 'none') filtered = filtered.filter((server) => !server.groupId)
-    else if (groupFilter !== 'all') filtered = filtered.filter((server) => server.groupId === groupFilter)
-
-    if (query) {
-      filtered = filtered.filter((server) =>
-        [server.name, server.description, commandPreview(server)].some((text) => text.toLowerCase().includes(query))
-      )
-    }
-
-    return [...filtered].sort((a, b) => {
-      if (a.favorite !== b.favorite) return a.favorite ? -1 : 1
-      return a.name.localeCompare(b.name, 'zh-Hans-CN')
-    })
-  }, [app?.servers, search, groupFilter])
+  const servers = useMemo(() => selectVisibleServers(state), [state])
 
   const group = app?.groups.find((item) => item.id === groupFilter)
   const title = groupFilter === 'all' ? '全部服务器' : groupFilter === 'none' ? '未分组' : group?.name ?? '服务器'
@@ -51,13 +37,14 @@ export function ServerList(): ReactNode {
             variant="primary"
             size="sm"
             icon="plus"
+            title={`新建 MCP（${shortcutHint('newServer')}）`}
             onClick={() => goTo({ mode: 'create', serverId: null, tab: 'overview', capKind: 'tools', capItem: null, autorun: false })}
           >
             新建
           </Button>
         </div>
         <div className="list__tools">
-          <div className="search">
+          <div className="search" title={`搜索（${shortcutHint('search')}）`}>
             <Icon name="search" size={14} className="search__icon" />
             <input
               className="search__input"
@@ -74,7 +61,7 @@ export function ServerList(): ReactNode {
             icon="pulse"
             loading={busy['test:all']}
             onClick={() => void testAll()}
-            title="依次测试所有服务器"
+            title={`依次测试所有服务器（${shortcutHint('testAll')}）`}
           >
             全部测试
           </Button>

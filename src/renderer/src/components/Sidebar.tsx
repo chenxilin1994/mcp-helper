@@ -93,7 +93,7 @@ export function Sidebar(): ReactNode {
           <Icon name="settings" size={15} />
           <span className="side-item__label">设置</span>
         </button>
-        <p className="sidebar__version mono">v0.1.0 · 本地数据</p>
+        <p className="sidebar__version mono">v{__APP_VERSION__} · 本地数据</p>
       </div>
     </aside>
   )
